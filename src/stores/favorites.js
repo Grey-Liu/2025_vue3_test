@@ -3,11 +3,14 @@ import { defineStore } from 'pinia'
 // 可以不用做到local storage
 
 export const useFavoriteStore = defineStore('favoriteStore', () => {
-  const list = ref([])
+  const favoriteslist = ref([])
 
   // 任務8. 加入我的最愛
   const addFav = (target) => {
     console.log(target);
+    favoriteslist.value.push(target)
+    console.log(favoriteslist.value);
+    
   }
 
   // 移除我的最愛
@@ -15,11 +18,11 @@ export const useFavoriteStore = defineStore('favoriteStore', () => {
     const targetID = target && target.id? target.id : null
     if (!targetID) return
 
-    const idx = list.value.findIndex(fav => fav.id == targetID)
+    const idx = favoriteslist.value.findIndex(fav => fav.id == targetID)
     if (idx >= 0){
-      list.value.splice(idx, 1)
+      favoriteslist.value.splice(idx, 1)
     }
   }
 
-  return { list, addFav, removeFav }
+  return { favoriteslist, addFav, removeFav }
 })

@@ -1,14 +1,20 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed ,onMounted  } from 'vue'
+import FavList from './components/FavList.vue'
 // 任務1. 引入FavList組件到App.vue的aside中
 
 // 如果使用pinia
-// import { useFavoriteStore } from '@/stores/favorites'
-// const favoriteStore = useFavoriteStore()
+import { useFavoriteStore } from '@/stores/favorites'
+const favoriteStore = useFavoriteStore()
 
 // 任務2. 顯示專輯資料
 // 目前畫面中僅呈現defaultData
 // 請將資料替換成`public/albums.json`中的專輯資料
+import { useAlbumsStore } from '@/stores/albums'
+const albumsStore = useAlbumsStore();
+// console.log(albumsStore.albumslist);
+
+
 const defaultData = {
   "id": 1,
   "images": "https://i.scdn.co/image/ab67616d00001e023e59f3e73b99ed248ab7bae2",
@@ -21,16 +27,28 @@ onMounted(()=>{
 
 // 任務3:開啟關閉側拉選單(收藏列表)
 const asideToggle = ref(false)
-const toggleAside = () => {}
+const toggleAside = () => {
+  asideToggle.value = !asideToggle.value
+  // console.log(asideToggle.value);
+  
+}
 
 // 任務4.專輯資料可以被input搜尋
 const search = ref('')
+const filteredItems = computed(() => {
+  if (!search.value) return albumsStore.albumslist;
+  return albumsStore.albumslist.filter(item =>
+    item.name.toLowerCase().includes(search.value.toLowerCase())
+  );
+});
+
 
 // 任務5.加入我的收藏
 // 不限定方式，如果不知道怎麼使用pinia可以用其他方式
-const addFav = (item) => {
-  console.log(item);
-}
+// const addFav = (item) => {
+//   console.log(item);
+  
+// }
 
 </script>
 
@@ -45,14 +63,14 @@ const addFav = (item) => {
   </header>
 
   <main>
-    <div class="card">
-      <img :src="defaultData.images" />
+    <div class="card" v-for="item in filteredItems" :key="item">
+      <img :src=" item.images" />
       <div class="card_body">
-        <h6>{{ defaultData.name }}</h6>
-        <p>{{ defaultData.artists }}</p>
+        <h6>{{ item.name }}</h6>
+        <p>{{ item.artists }}</p>
       </div>
       <div class="card_footer">
-        <button class="favoriteBtn" @click="addFav(defaultData)">
+        <button class="favoriteBtn" @click="favoriteStore.addFav(item)">
           <img src="~@/assets/heartBlack.png" alt="收藏專輯" />
         </button>
       </div>
@@ -61,6 +79,7 @@ const addFav = (item) => {
 
   <aside :class="{ open: asideToggle }">
     <!-- 收藏清單 -->
+    <FavList/>
   </aside>
 </template>
 
