@@ -11,11 +11,11 @@ const favoriteStore = useFavoriteStore()
 
 <template>
   <div class="favList">
-    <div class="nodata">還沒有加入收藏喔</div>
+    <div class="nodata" v-if="favoriteStore.favoriteslist.length === 0">還沒有加入收藏喔</div>
 
     <!-- 任務7-1. 沒有收藏列表顯示⬆️有收藏列表顯示⬇️-->
 
-    <div class="container">
+    <div class="container" v-if="favoriteStore.favoriteslist.length > 0">
       <!-- 任務7-2. 顯示收藏列表-->
       <div class="list" v-for="item in favoriteStore.favoriteslist" :key="item.id">
         <img :src="item.images" />
